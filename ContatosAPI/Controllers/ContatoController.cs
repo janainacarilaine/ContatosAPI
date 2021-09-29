@@ -3,6 +3,7 @@ using ContatosAPI.Data;
 using ContatosAPI.Data.Dtos;
 using ContatosAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,12 +40,12 @@ namespace ContatosAPI.Controllers
         }
 
         [HttpGet("{nome}")]
-        public IActionResult GetContatoPorNome(string nome)
+        public IActionResult ObterContatoPorNome(string nome)
         {
             StringComparison name = StringComparison.OrdinalIgnoreCase;
 
             List<Contato> cont = new ();
-            foreach (var contato in _context.Contatos)
+            foreach (var contato in _context.Contatos.AsNoTracking())
             {
                 if (contato.Nome.StartsWith(nome, name))
                 {
@@ -62,7 +63,7 @@ namespace ContatosAPI.Controllers
             
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public IActionResult AlteraContato(int id,[FromBody] AlteraContatoDto contatoNovoDto)
         {
             Contato contato = _context.Contatos.FirstOrDefault(x => x.Id == id);
@@ -75,7 +76,7 @@ namespace ContatosAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public IActionResult DeletaContato(int id)
         {
             Contato contato = _context.Contatos.FirstOrDefault(x => x.Id == id);
